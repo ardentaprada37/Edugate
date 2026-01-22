@@ -71,6 +71,30 @@
                             </div>
                         </div>
 
+                        <!-- Exit Permission Check -->
+                        @php
+                            $exitPermission = $student->getExitPermissionForDate(date('Y-m-d'));
+                        @endphp
+                        @if($exitPermission)
+                            <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 mb-6 text-white">
+                                <div class="flex items-center">
+                                    <div class="bg-white bg-opacity-30 rounded-full p-3 mr-4">
+                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-xl font-bold mb-1">✓ Student Has Approved Exit Permission</p>
+                                        <p class="text-sm text-green-100">Exit Date: {{ $exitPermission->exit_date->format('d M Y') }}</p>
+                                        <p class="text-sm text-green-100">Reason: {{ Str::limit($exitPermission->reason, 60) }}</p>
+                                        <a href="{{ route('exit-permissions.show', $exitPermission->id) }}" class="text-sm text-white underline hover:text-green-100 mt-2 inline-block">
+                                            View exit permission details →
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Late Date -->
                         <div class="mb-6">
                             <label for="late_date" class="block text-gray-800 text-lg font-bold mb-3 flex items-center">

@@ -32,6 +32,11 @@ class Student extends Model
         return $this->hasMany(LateAttendance::class, 'student_id');
     }
 
+    public function exitPermissions()
+    {
+        return $this->hasMany(ExitPermission::class, 'student_id');
+    }
+
     // Helper methods
     public function getTotalLateCount()
     {
@@ -49,6 +54,22 @@ class Student extends Model
         }
         
         return 'normal';
+    }
+
+    public function hasApprovedExitPermission($date)
+    {
+        return $this->exitPermissions()
+            ->whereDate('exit_date', $date)
+            ->where('status', 'approved')
+            ->exists();
+    }
+
+    public function getExitPermissionForDate($date)
+    {
+        return $this->exitPermissions()
+            ->whereDate('exit_date', $date)
+            ->where('status', 'approved')
+            ->first();
     }
 
     // Scopes

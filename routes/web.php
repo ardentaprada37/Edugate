@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\LateAttendanceController;
+use App\Http\Controllers\ExitPermissionController;
 use App\Http\Controllers\Admin\ClassManagementController;
 use App\Http\Controllers\Admin\StudentManagementController;
 use App\Http\Controllers\Admin\UserManagementController;
@@ -37,16 +38,37 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/late-attendance/create/{studentId}', [LateAttendanceController::class, 'create'])->name('late-attendance.create');
     Route::post('/late-attendance', [LateAttendanceController::class, 'store'])->name('late-attendance.store');
     
+    // Bulk Late Attendance
+    Route::post('/late-attendance/bulk-review', [LateAttendanceController::class, 'bulkReview'])->name('late-attendance.bulk-review');
+    Route::post('/late-attendance/bulk-store', [LateAttendanceController::class, 'bulkStore'])->name('late-attendance.bulk-store');
+    
     // Admin and Teacher can update status
     Route::middleware(['role:admin,teacher'])->group(function () {
         Route::patch('/late-attendance/{id}/status', [LateAttendanceController::class, 'updateStatus'])->name('late-attendance.update-status');
     });
     
-    // Telegram Notification Routes
-    Route::get('/telegram/review', [App\Http\Controllers\TelegramNotificationController::class, 'review'])->name('telegram.review');
-    Route::post('/telegram/send', [App\Http\Controllers\TelegramNotificationController::class, 'send'])->name('telegram.send');
-    Route::post('/telegram/reset', [App\Http\Controllers\TelegramNotificationController::class, 'reset'])->name('telegram.reset');
-    Route::get('/telegram/test', [App\Http\Controllers\TelegramNotificationController::class, 'test'])->name('telegram.test');
+    // Exit Permission Routes
+    Route::prefix('exit-permissions')->name('exit-permissions.')->group(function () {
+        Route::get('/', [ExitPermissionController::class, 'index'])->name('index');
+        Route::get('/classes', [ExitPermissionController::class, 'classList'])->name('classes');
+        Route::get('/classes/{classId}', [ExitPermissionController::class, 'showClassExitPermissions'])->name('class-show');
+        Route::get('/create', [ExitPermissionController::class, 'create'])->name('create');
+        Route::post('/', [ExitPermissionController::class, 'store'])->name('store');
+        Route::get('/{exitPermission}', [ExitPermissionController::class, 'show'])->name('show');
+        
+        // AJAX endpoint to get students by class
+        Route::get('/ajax/students-by-class', [ExitPermissionController::class, 'getStudentsByClass'])->name('students-by-class');
+        
+        // Walas approval (homeroom teacher only)
+        Route::middleware(['role:homeroom_teacher'])->group(function () {
+            Route::post('/{exitPermission}/walas-approve', [ExitPermissionController::class, 'walasApprove'])->name('walas-approve');
+        });
+        
+        // Admin approval (admin and teacher)
+        Route::middleware(['role:admin,teacher'])->group(function () {
+            Route::post('/{exitPermission}/admin-approve', [ExitPermissionController::class, 'adminApprove'])->name('admin-approve');
+        });
+    });
     
     // Admin only routes
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {

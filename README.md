@@ -1,270 +1,143 @@
-# 🎯 School Late Attendance Management System
+Feature Objective
 
-A complete Laravel-based web application to digitally record and manage students who arrive late at school, replacing the manual paper-based system used by teachers.
+Improve the late attendance recording flow so teachers can select multiple late students first, review them in a separate page, and then submit all records at once with minimal input effort.
 
-## ✅ Project Status: **COMPLETED**
+This feature aims to reduce repetitive input and speed up daily usage.
 
-This system is fully implemented with all features from the requirements below.
+🧭 Updated User Flow
 
-## 🚀 Quick Start
+Teacher selects a class
 
-See [INSTALLATION.md](INSTALLATION.md) for complete setup instructions.
+Teacher checks (checkbox) students who are late
 
-```bash
-# Install dependencies
-composer install
-npm install
+Teacher clicks Submit Selection
 
-# Setup database
-cp .env.example .env
-php artisan key:generate
-php artisan migrate:fresh --seed
+System opens a Review & Confirmation Page
 
-# Build and run
-npm run build
-php artisan serve
-```
+Teacher fills one shared late attendance form
 
-**Default Admin Login:**
-- Email: admin@school.com
-- Password: password
+Teacher submits once
 
----
+System:
 
-## 📋 Original Requirements
+Saves all records
 
-Build a Laravel-based web application to digitally record and manage students who arrive late at school, replacing the current manual paper-based system used by teachers.
+Sends notification to Telegram automatically
 
-The system should be simple, fast, user-friendly, and suitable for daily use by school staff.
+1️⃣ Student Selection Page (Updated)
 
-🧩 Core Features Prompt
-1️⃣ Authentication & User Roles
+Display a list of students by class
 
-Create an authentication system with role-based access control.
+Each student has a checkbox
 
-Roles:
+No late data is entered at this stage
 
-Admin
+A button is provided:
 
-Manage classes
+“Submit Selection”
 
-Manage students
+This page is only used to collect late students.
 
-Manage teachers/users
+2️⃣ Late Student Review Page (New)
 
-Manage late reasons
+After clicking Submit Selection, show a new page containing:
 
-Teacher / Duty Officer
+A. Late Student List
 
-Record student lateness
-
-Homeroom Teacher
-
-View lateness reports for their assigned class only
-
-2️⃣ Class Selection Page
-
-Create a page that displays a list of available classes, for example:
-
-Grade 10 PPLG
-
-Grade 11 PPLG
-
-Grade 12 PPLG
-
-Grade 10 DKV
-
-Grade 11 DKV
-
-Grade 12 DKV
-
-Teachers can click a class to view the list of students in that class.
-
-3️⃣ Student List & Selection
-
-On the selected class page:
-
-Display all students belonging to the class
-
-Each student should have a checkbox
-
-Allow teachers to select one student at a time
-
-Provide a “Continue / Submit” button to proceed
-
-4️⃣ Late Attendance Input Form
-
-After selecting a student, show a form with the following fields:
-
-Student Name (auto-filled, read-only)
-
-Class Name (auto-filled)
-
-Late Reason (dropdown)
-
-Arrival Time (time picker)
-
-Date of Late Arrival (date picker, default: today)
-
-Additional Notes (optional)
-
-Submit button
-
-Late Reason Options:
-
-Woke up late
-
-Transportation issue
-
-Heavy rain
-
-Discipline issue
-
-Other
-
-5️⃣ Data Storage & Relationships
-
-Design database tables with the following relationships:
-
-One class has many students
-
-One student can have many late attendance records
-
-Late attendance records store:
-
-student_id
-
-class_id
-
-reason_id
-
-arrival_time
-
-late_date
-
-notes
-
-status
-
-📊 Reporting & Monitoring Features
-6️⃣ Late Attendance Recap Page
-
-Create a table view showing:
+Table/list of selected students:
 
 Student Name
 
 Class
 
-Date
+Ability to:
 
-Arrival Time
+Remove a student from the list (optional)
 
-Late Reason
+B. Shared Late Attendance Form
 
-Status
+One form that applies to all selected students:
 
-Include features:
+Late Reason (dropdown)
 
-Search by student name
+Arrival Time (time picker)
 
-Filter by class
+Late Date (date picker, default: current date)
 
-Filter by date/month
+This design avoids repetitive data entry.
 
-7️⃣ Student Late History Page
+3️⃣ Final Submission Behavior
 
-Create a detailed student profile page displaying:
+When the teacher clicks Final Submit:
 
-Total number of late arrivals
+The system saves multiple late attendance records in one action
 
-Complete lateness history
+Each selected student gets:
 
-Status indicators:
+The same reason
 
-Warning after 3 late arrivals
+The same arrival time
 
-Parent notification after 5 late arrivals
+The same date
 
-📈 Statistics & Insights
-8️⃣ Dashboard Statistics
+No additional confirmation page is required.
 
-Display simple analytics:
+4️⃣ Telegram Notification Integration
 
-Top 5 students with the most late arrivals
+After successful submission:
 
-Classes with the highest lateness frequency
+The system automatically sends a Telegram message
 
-Monthly late attendance summary
+No extra “Send” button is needed
 
-🧾 Export & Documentation
-9️⃣ PDF Export Feature
+Telegram Message Content Example:
 
-Allow users to:
+Class: 10 PPLG
 
-Export lateness reports per class
+Date: 2026-01-17
 
-Export lateness reports per student
+Arrival Time: 07:25
 
-Download reports as PDF files for school documentation
+Reason: Transportation issue
 
-⚙️ System Configuration
-🔟 Late Reason Management
+Late Students:
 
-Allow Admin users to:
+Student A
 
-Add new late reasons
+Student B
 
-Edit existing reasons
+Student C
 
-Delete unused reasons
+⚙️ System Rules
 
-1️⃣1️⃣ Late Attendance Status Management
+Telegram notification is sent only after successful database save
 
-Each lateness record should have a status:
+If database save fails, Telegram message must NOT be sent
 
-Pending
+Message is sent automatically in the background
 
-Approved
+🛠️ Technical Notes
 
-Rejected
+Use batch insert for performance
 
-Admins or authorized staff can update the status.
+Use transactions to ensure data consistency
 
-🧠 Smart Features (Optional)
-1️⃣2️⃣ Automatic Date & Time
+Telegram Bot API integration
 
-Automatically fill current date and time
+Reuse existing class and student data
 
-Allow manual editing if needed
+🎯 UX Principles
 
-1️⃣3️⃣ QR Code Class Access (Optional)
+Minimal clicks
 
-Generate a QR code for each class
+Minimal typing
 
-Scanning the QR code opens the student list of that class
+Fast daily operation for teachers
 
-🛠️ Technology Stack
+Clear separation between:
 
-Backend: Laravel (latest version)
+Student selection
 
-Database: MySQL
+Data confirmation
 
-Frontend: Blade Templates
-
-Styling: Tailwind CSS or Bootstrap
-
-Authentication: Laravel built-in auth system
-
-🎯 Design Principles
-
-Simple and clean UI
-
-Optimized for fast daily input
-
-Mobile-friendly layout
-
-Clear validation messages
-
-📌 Final Notes
-
-The application should follow Laravel MVC architecture, use proper validation, and ensure data security and role-based access.
+Final submission

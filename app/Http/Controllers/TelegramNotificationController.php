@@ -55,11 +55,10 @@ class TelegramNotificationController extends Controller
             return back()->with('error', 'Tidak ada data yang dipilih.');
         }
 
-        // Kirim ke Telegram
         $result = $this->telegramService->sendBatchNotification($attendances);
 
         if ($result) {
-            // Update status atau tandai sudah dikirim
+            
             foreach ($attendances as $attendance) {
                 $attendance->update(['telegram_sent' => true, 'telegram_sent_at' => now()]);
             }
@@ -70,9 +69,8 @@ class TelegramNotificationController extends Controller
         }
     }
 
-    /**
-     * Test koneksi Telegram
-     */
+    
+     
     public function test()
     {
         $result = $this->telegramService->testConnection();

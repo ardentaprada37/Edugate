@@ -38,11 +38,11 @@
                         </svg>
                         Laporan
                     </x-nav-link>
-                    <x-nav-link :href="route('telegram.review')" :active="request()->routeIs('telegram.*')" class="!text-white hover:!bg-white hover:!bg-opacity-20 !border-transparent hover:!border-white">
+                    <x-nav-link :href="route('exit-permissions.index')" :active="request()->routeIs('exit-permissions.*')" class="!text-white hover:!bg-white hover:!bg-opacity-20 !border-transparent hover:!border-white">
                         <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                         </svg>
-                        Telegram
+                        Izin Keluar
                     </x-nav-link>
                     @if(auth()->user()->isAdmin())
                     <x-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.*')" class="!text-white hover:!bg-white hover:!bg-opacity-20 !border-transparent hover:!border-white">
@@ -119,8 +119,8 @@
             <x-responsive-nav-link :href="route('late-attendance.index')" :active="request()->routeIs('late-attendance.*')">
                 {{ __('Laporan Keterlambatan') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('telegram.review')" :active="request()->routeIs('telegram.*')">
-                {{ __('Kirim ke Telegram') }}
+            <x-responsive-nav-link :href="route('exit-permissions.index')" :active="request()->routeIs('exit-permissions.*')">
+                {{ __('Izin Keluar Siswa') }}
             </x-responsive-nav-link>
             @if(auth()->user()->isAdmin())
             <x-responsive-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.*')">

@@ -31,6 +31,11 @@ class SchoolClass extends Model
         return $this->hasMany(LateAttendance::class, 'class_id');
     }
 
+    public function exitPermissions()
+    {
+        return $this->hasMany(ExitPermission::class, 'class_id');
+    }
+
     public function homeroomTeacher()
     {
         return $this->hasOne(User::class, 'assigned_class_id');

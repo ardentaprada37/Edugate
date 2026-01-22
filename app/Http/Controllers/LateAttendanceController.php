@@ -35,10 +35,46 @@ class LateAttendanceController extends Controller
         $validated['recorded_by'] = auth()->id();
         $validated['status'] = 'pending';
         
-        \App\Models\LateAttendance::create($validated);
+        $telegramService = new \App\Services\TelegramService();
         
-        return redirect()->route('classes.show', $validated['class_id'])
-            ->with('success', 'Late attendance recorded successfully.');
+        try {
+            // Use transaction to ensure data consistency
+            \DB::beginTransaction();
+            
+            // Create late attendance record
+            $record = \App\Models\LateAttendance::create($validated);
+            
+            // Commit transaction first - only send Telegram if DB save succeeds
+            \DB::commit();
+            
+            // Load relationships for Telegram notification
+            $recordWithRelations = \App\Models\LateAttendance::with(['student', 'schoolClass', 'lateReason', 'recordedBy'])
+                ->find($record->id);
+            
+            // Send automatic Telegram notification
+            try {
+                $telegramSent = $telegramService->sendSingleLateNotification($recordWithRelations);
+                
+                // Update telegram_sent status
+                if ($telegramSent) {
+                    $record->update([
+                        'telegram_sent' => true,
+                        'telegram_sent_at' => now(),
+                    ]);
+                }
+            } catch (\Exception $e) {
+                // Log error but don't fail the request - record is already saved
+                \Log::error('Telegram notification failed for single late attendance: ' . $e->getMessage());
+            }
+            
+            return redirect()->route('classes.show', $validated['class_id'])
+                ->with('success', 'Keterlambatan berhasil dicatat. Notifikasi Telegram dikirim otomatis.');
+                
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Late attendance store failed: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Gagal menyimpan data keterlambatan. Silakan coba lagi.'])->withInput();
+        }
     }
     
     public function index(Request $request)
@@ -93,5 +129,147 @@ class LateAttendanceController extends Controller
         $attendance->update($validated);
         
         return back()->with('success', 'Status updated successfully.');
+    }
+    
+    /**
+     * Show bulk review page for multiple students (supports multiple classes)
+     */
+    public function bulkReview(Request $request)
+    {
+        $validated = $request->validate([
+            'class_id' => 'nullable|exists:classes,id',
+            'student_ids' => 'required|array|min:1',
+            'student_ids.*' => 'exists:students,id',
+            'existing_form_data' => 'nullable|json', // Accept existing form data
+        ]);
+        
+        // Parse existing form data if provided
+        $existingFormData = [];
+        $existingStudentIds = [];
+        if (!empty($validated['existing_form_data'])) {
+            $existingFormData = json_decode($validated['existing_form_data'], true);
+            // Extract student IDs from existing form data
+            $existingStudentIds = array_column($existingFormData, 'student_id');
+        }
+        
+        // Merge existing student IDs with new student IDs
+        $allStudentIds = array_unique(array_merge($existingStudentIds, $validated['student_ids']));
+        
+        // Get all students (existing + new) with their classes
+        $studentsQuery = \App\Models\Student::whereIn('id', $allStudentIds)
+            ->with('schoolClass');
+        
+        // If homeroom teacher, restrict to their class only
+        if (auth()->user()->isHomeroomTeacher()) {
+            $studentsQuery->where('class_id', auth()->user()->assigned_class_id);
+        }
+        
+        $students = $studentsQuery->get();
+        
+        if ($students->isEmpty()) {
+            return redirect()->route('classes.index')
+                ->with('error', 'Tidak ada siswa yang valid dipilih.');
+        }
+        
+        // Get unique classes from selected students
+        $classes = $students->pluck('schoolClass')->unique('id');
+        
+        $lateReasons = \App\Models\LateReason::active()->get();
+        
+        return view('late-attendance.bulk-review', compact('students', 'lateReasons', 'classes', 'existingFormData'));
+    }
+    
+    /**
+     * Store bulk late attendance records with automatic Telegram notification
+     * Each student has individual data (time, reason, notes)
+     */
+    public function bulkStore(Request $request)
+    {
+        $validated = $request->validate([
+            'students' => 'required|array|min:1',
+            'students.*.student_id' => 'required|exists:students,id',
+            'students.*.class_id' => 'required|exists:classes,id',
+            'students.*.late_date' => 'required|date',
+            'students.*.arrival_time' => 'required',
+            'students.*.late_reason_id' => 'required|exists:late_reasons,id',
+            'students.*.notes' => 'nullable|string',
+        ]);
+        
+        // Verify all students exist and belong to their specified classes
+        $studentIds = array_column($validated['students'], 'student_id');
+        $students = \App\Models\Student::whereIn('id', $studentIds)->get();
+        
+        if ($students->count() != count($studentIds)) {
+            return back()->withErrors(['students' => 'Beberapa siswa tidak valid.'])->withInput();
+        }
+        
+        // If homeroom teacher, verify they can only add students from their class
+        if (auth()->user()->isHomeroomTeacher()) {
+            foreach ($validated['students'] as $studentData) {
+                if ($studentData['class_id'] != auth()->user()->assigned_class_id) {
+                    abort(403, 'You can only record attendance for students from your assigned class.');
+                }
+            }
+        }
+        
+        $createdRecords = [];
+        $telegramService = new \App\Services\TelegramService();
+        
+        try {
+            // Use transaction to ensure data consistency
+            \DB::beginTransaction();
+            
+            // Create late attendance records for each student with their individual data
+            foreach ($validated['students'] as $studentData) {
+                $record = \App\Models\LateAttendance::create([
+                    'student_id' => $studentData['student_id'],
+                    'class_id' => $studentData['class_id'],
+                    'late_reason_id' => $studentData['late_reason_id'],
+                    'late_date' => $studentData['late_date'],
+                    'arrival_time' => $studentData['arrival_time'],
+                    'notes' => $studentData['notes'] ?? null,
+                    'recorded_by' => auth()->id(),
+                    'status' => 'pending',
+                ]);
+                
+                $createdRecords[] = $record;
+            }
+            
+            // Commit transaction first - only send Telegram if DB save succeeds
+            \DB::commit();
+            
+            // Load relationships for Telegram notification
+            $recordsWithRelations = \App\Models\LateAttendance::with(['student', 'schoolClass', 'lateReason', 'recordedBy'])
+                ->whereIn('id', collect($createdRecords)->pluck('id'))
+                ->get();
+            
+            // Send automatic Telegram notification for each record
+            try {
+                $telegramSent = $telegramService->sendBulkIndividualLateNotification($recordsWithRelations);
+                
+                // Update telegram_sent status for all records
+                if ($telegramSent) {
+                    \App\Models\LateAttendance::whereIn('id', collect($createdRecords)->pluck('id'))
+                        ->update([
+                            'telegram_sent' => true,
+                            'telegram_sent_at' => now(),
+                        ]);
+                }
+            } catch (\Exception $e) {
+                // Log error but don't fail the request - records are already saved
+                \Log::error('Telegram notification failed for bulk late attendance: ' . $e->getMessage());
+            }
+            
+            $studentCount = count($createdRecords);
+            
+            // Redirect to classes index instead of specific class (since students may be from multiple classes)
+            return redirect()->route('classes.index')
+                ->with('success', "Berhasil mencatat keterlambatan untuk {$studentCount} siswa. Notifikasi Telegram dikirim otomatis.");
+                
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Bulk late attendance store failed: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Gagal menyimpan data keterlambatan. Silakan coba lagi.'])->withInput();
+        }
     }
 }

@@ -26,6 +26,8 @@ class DashboardController extends Controller
                     ->orderBy('late_attendances_count', 'desc')
                     ->take(5)
                     ->get(),
+                'exit_permissions_pending' => \App\Models\ExitPermission::pending()->count(),
+                'exit_permissions_today' => \App\Models\ExitPermission::whereDate('exit_date', today())->approved()->count(),
             ];
         } else {
             // Homeroom teacher - only their class
@@ -40,6 +42,8 @@ class DashboardController extends Controller
                     ->orderBy('late_attendances_count', 'desc')
                     ->take(5)
                     ->get(),
+                'exit_permissions_pending' => \App\Models\ExitPermission::where('class_id', $user->assigned_class_id)->pending()->count(),
+                'exit_permissions_today' => \App\Models\ExitPermission::where('class_id', $user->assigned_class_id)->whereDate('exit_date', today())->approved()->count(),
             ];
         }
         

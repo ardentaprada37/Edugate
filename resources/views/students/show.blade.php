@@ -84,6 +84,75 @@
                 </div>
             </div>
 
+            <!-- Exit Permissions Card -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Exit Permissions</h3>
+                        <a href="{{ route('exit-permissions.create') }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                            + Request Exit Permission
+                        </a>
+                    </div>
+                    
+                    @if($student->exitPermissions->count() > 0)
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exit Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($student->exitPermissions->sortByDesc('exit_date')->take(5) as $permission)
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {{ $permission->exit_date->format('d M Y') }}
+                                            @if($permission->exit_time)
+                                                <br><span class="text-xs text-gray-500">{{ $permission->exit_time->format('H:i') }}</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-900">{{ Str::limit($permission->reason, 40) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @if($permission->status === 'approved')
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                    ✓ Approved
+                                                </span>
+                                            @elseif($permission->status === 'rejected')
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                    ✗ Rejected
+                                                </span>
+                                            @else
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                    ⏳ Pending
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <a href="{{ route('exit-permissions.show', $permission->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @if($student->exitPermissions->count() > 5)
+                            <div class="mt-4 text-center">
+                                <a href="{{ route('exit-permissions.index') }}?search={{ $student->name }}" class="text-indigo-600 hover:text-indigo-900 text-sm">
+                                    View all exit permissions →
+                                </a>
+                            </div>
+                        @endif
+                    @else
+                        <p class="text-gray-500 text-sm">No exit permission requests found.</p>
+                    @endif
+                </div>
+            </div>
+
             <!-- Late History Table -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
