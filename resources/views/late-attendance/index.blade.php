@@ -17,7 +17,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
-                    <form method="GET" action="{{ route('late-attendance.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <form method="GET" action="{{ route('late-attendance.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- Search -->
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search Student</label>
@@ -46,19 +46,8 @@
                                 class="shadow-sm border rounded w-full py-2 px-3 text-gray-700">
                         </div>
 
-                        <!-- Status Filter -->
-                        <div>
-                            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                            <select name="status" id="status" class="shadow-sm border rounded w-full py-2 px-3 text-gray-700">
-                                <option value="">All Status</option>
-                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
-                                <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                            </select>
-                        </div>
-
                         <!-- Buttons -->
-                        <div class="md:col-span-4 flex gap-2">
+                        <div class="md:col-span-3 flex gap-2">
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Apply Filters
                             </button>
@@ -97,10 +86,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Time</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    @if(auth()->user()->isAdmin() || auth()->user()->isTeacher())
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                                    @endif
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recorded By</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -115,40 +101,11 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $attendance->schoolClass->name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ date('H:i', strtotime($attendance->arrival_time)) }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500">{{ $attendance->lateReason->reason }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if($attendance->status == 'pending')
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                Pending
-                                            </span>
-                                        @elseif($attendance->status == 'approved')
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                Approved
-                                            </span>
-                                        @else
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                                Rejected
-                                            </span>
-                                        @endif
-                                    </td>
-                                    @if(auth()->user()->isAdmin() || auth()->user()->isTeacher())
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        @if($attendance->status == 'pending')
-                                        <form method="POST" action="{{ route('late-attendance.update-status', $attendance->id) }}" class="inline-flex gap-1">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" name="status" value="approved" class="text-green-600 hover:text-green-900">Approve</button>
-                                            <span class="text-gray-300">|</span>
-                                            <button type="submit" name="status" value="rejected" class="text-red-600 hover:text-red-900">Reject</button>
-                                        </form>
-                                        @else
-                                            <span class="text-gray-400">-</span>
-                                        @endif
-                                    </td>
-                                    @endif
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $attendance->recordedBy->name ?? 'N/A' }}</td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">No late attendance records found.</td>
+                                    <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">No late attendance records found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -163,4 +120,63 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Auto-refresh halaman setiap 30 detik untuk update data real-time
+        setInterval(function() {
+            // Hanya refresh jika tidak ada form yang sedang di-submit atau input yang aktif
+            if (!document.querySelector('form:target') && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+                // Simpan scroll position
+                const scrollPosition = window.scrollY;
+                
+                // Refresh halaman
+                window.location.reload();
+                
+                // Restore scroll position setelah reload
+                setTimeout(() => {
+                    window.scrollTo(0, scrollPosition);
+                }, 100);
+            }
+        }, 30000); // 30 detik
+
+        // Tambahkan visual indicator untuk auto-refresh
+        let countdown = 30;
+        const updateCountdown = () => {
+            const indicator = document.getElementById('refresh-indicator');
+            if (indicator) {
+                indicator.textContent = `Auto-refresh dalam ${countdown}s`;
+                countdown--;
+                if (countdown < 0) countdown = 30;
+            }
+        };
+
+        // Buat indicator elemen
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.querySelector('.max-w-7xl .flex.justify-between');
+            if (header) {
+                const indicator = document.createElement('div');
+                indicator.id = 'refresh-indicator';
+                indicator.className = 'text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded';
+                indicator.textContent = 'Auto-refresh dalam 30s';
+                header.appendChild(indicator);
+                
+                // Update countdown setiap detik
+                setInterval(updateCountdown, 1000);
+            }
+        });
+
+        // Pause auto-refresh ketika user sedang mengisi form
+        let pauseRefresh = false;
+        document.addEventListener('focusin', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+                pauseRefresh = true;
+            }
+        });
+
+        document.addEventListener('focusout', function(e) {
+            setTimeout(() => {
+                pauseRefresh = false;
+            }, 1000);
+        });
+    </script>
 </x-app-layout>

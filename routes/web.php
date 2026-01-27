@@ -35,6 +35,8 @@ Route::middleware(['auth'])->group(function () {
     
     // Late Attendance
     Route::get('/late-attendance', [LateAttendanceController::class, 'index'])->name('late-attendance.index');
+    Route::get('/late-attendance/report', [LateAttendanceController::class, 'dailyReport'])->name('late-attendance.report');
+    Route::get('/late-attendance/export-pdf', [LateAttendanceController::class, 'exportPDF'])->name('late-attendance.export-pdf');
     Route::get('/late-attendance/create/{studentId}', [LateAttendanceController::class, 'create'])->name('late-attendance.create');
     Route::post('/late-attendance', [LateAttendanceController::class, 'store'])->name('late-attendance.store');
     

@@ -73,4 +73,46 @@ class LateAttendance extends Model
         return $query->whereMonth('late_date', $month)
                      ->whereYear('late_date', $year);
     }
+
+    public function scopeByClass($query, $classId)
+    {
+        return $query->where('class_id', $classId);
+    }
+
+    public function scopeExcused($query, $date = null)
+    {
+        $date = $date ?: today();
+        return $query->whereHas('student', function($q) use ($date) {
+            $q->whereHas('exitPermissions', function($exitQ) use ($date) {
+                $exitQ->whereDate('exit_date', $date)
+                      ->where('status', 'approved');
+            });
+        });
+    }
+
+    // Helper methods
+    public function getMinutesLate()
+    {
+        $arrivalTime = \Carbon\Carbon::parse($this->arrival_time);
+        $schoolStart = \Carbon\Carbon::parse($this->late_date)->setTime(7, 0, 0);
+        return $schoolStart->diffInMinutes($arrivalTime);
+    }
+
+    public function isExcused()
+    {
+        return $this->student->hasApprovedExitPermission($this->late_date);
+    }
+
+    public function getLateSeverity()
+    {
+        $minutesLate = $this->getMinutesLate();
+        
+        if ($minutesLate > 30) {
+            return 'severe'; // Red badge
+        } elseif ($minutesLate > 15) {
+            return 'moderate'; // Yellow badge
+        } else {
+            return 'mild'; // Light yellow badge
+        }
+    }
 }
