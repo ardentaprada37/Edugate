@@ -151,9 +151,7 @@ class LateAttendanceController extends Controller
         return view('late-attendance.multi-create', compact('students', 'lateReasons'));
     }
     
-    /**
-     * Store multiple late attendance records with individual data per student
-     */
+    
     public function multiStore(Request $request)
     {
         $validated = $request->validate([

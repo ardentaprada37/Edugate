@@ -1,4 +1,58 @@
 <x-app-layout>
+    @push('styles')
+    <style>
+        /* Enhanced dropdown scroll containment styles */
+        #student_dropdown_inner {
+            /* Smooth scrolling behavior */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(147, 51, 234, 0.5) rgba(243, 244, 246, 0.5);
+        }
+
+        /* Custom scrollbar for webkit browsers */
+        #student_dropdown_inner::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #student_dropdown_inner::-webkit-scrollbar-track {
+            background: rgba(243, 244, 246, 0.5);
+            border-radius: 10px;
+        }
+
+        #student_dropdown_inner::-webkit-scrollbar-thumb {
+            background: rgba(147, 51, 234, 0.5);
+            border-radius: 10px;
+        }
+
+        #student_dropdown_inner::-webkit-scrollbar-thumb:hover {
+            background: rgba(147, 51, 234, 0.7);
+        }
+
+        /* Prevent text selection while scrolling */
+        #student_dropdown_inner.scrolling {
+            user-select: none;
+        }
+
+        /* Visual indicator when dropdown is active */
+        #student_dropdown {
+            box-shadow: 0 10px 25px rgba(147, 51, 234, 0.2);
+        }
+
+        /* Smooth transitions for student options */
+        .student-option {
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .student-option:hover {
+            transform: translateX(4px);
+        }
+
+        .student-option:active {
+            transform: translateX(2px);
+        }
+    </style>
+    @endpush
+
     <x-slot name="header">
         <div class="bg-gradient-to-r from-red-600 to-orange-600 -mt-6 -mx-6 px-6 py-8 mb-6">
             <div class="flex justify-between items-center">
@@ -65,25 +119,27 @@
                                 class="w-full px-6 py-4 text-lg border-3 border-gray-300 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 transition duration-300"
                                 autocomplete="off">
                             
-                            <!-- Dropdown list -->
-                            <div id="student_dropdown" class="hidden absolute z-50 w-full bg-white border-3 border-gray-300 rounded-2xl shadow-2xl mt-2 max-h-96 overflow-y-auto">
-                                @foreach($students as $student)
-                                    <div class="student-option px-6 py-4 hover:bg-purple-50 cursor-pointer border-b border-gray-100 transition duration-200" 
-                                         data-id="{{ $student->id }}" 
-                                         data-name="{{ $student->name }}" 
-                                         data-class="{{ $student->schoolClass->name }}" 
-                                         data-class-id="{{ $student->class_id }}">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg p-2 w-10 h-10 flex items-center justify-center">
-                                                <span class="text-lg font-black text-white">{{ strtoupper(substr($student->name, 0, 1)) }}</span>
-                                            </div>
-                                            <div>
-                                                <p class="font-bold text-gray-900">{{ $student->name }}</p>
-                                                <p class="text-sm text-gray-600">{{ $student->schoolClass->name }}</p>
+                            <!-- Dropdown list with enhanced scroll containment -->
+                            <div id="student_dropdown" class="hidden absolute z-50 w-full bg-white border-3 border-purple-300 rounded-2xl shadow-2xl mt-2" style="max-height: 384px;">
+                                <div id="student_dropdown_inner" class="overflow-y-auto overscroll-contain" style="max-height: 384px; scroll-behavior: smooth;">
+                                    @foreach($students as $student)
+                                        <div class="student-option px-6 py-4 hover:bg-purple-50 cursor-pointer border-b border-gray-100 transition duration-200" 
+                                             data-id="{{ $student->id }}" 
+                                             data-name="{{ $student->name }}" 
+                                             data-class="{{ $student->schoolClass->name }}" 
+                                             data-class-id="{{ $student->class_id }}">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg p-2 w-10 h-10 flex items-center justify-center">
+                                                    <span class="text-lg font-black text-white">{{ strtoupper(substr($student->name, 0, 1)) }}</span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-bold text-gray-900">{{ $student->name }}</p>
+                                                    <p class="text-sm text-gray-600">{{ $student->schoolClass->name }}</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                         <p class="text-sm text-gray-500 mt-2 flex items-center">
@@ -167,14 +223,36 @@
             // Get elements
             const studentSearch = document.getElementById('student_search');
             const studentDropdown = document.getElementById('student_dropdown');
+            const studentDropdownInner = document.getElementById('student_dropdown_inner');
             const studentOptions = document.querySelectorAll('.student-option');
             
-            // Store original dropdown HTML
-            const originalDropdownHTML = studentDropdown.innerHTML;
+            // Store original dropdown HTML (from inner container)
+            const originalDropdownHTML = studentDropdownInner.innerHTML;
+
+            // Prevent page scroll when dropdown is open and being scrolled
+            let isDropdownOpen = false;
+            
+            studentDropdownInner.addEventListener('wheel', function(e) {
+                // Check if we're at the top or bottom of the scroll
+                const atTop = this.scrollTop === 0;
+                const atBottom = this.scrollTop + this.clientHeight >= this.scrollHeight;
+                
+                // Prevent page scroll when we're scrolling inside the dropdown
+                // Only allow default if we're at boundaries AND trying to scroll further
+                if ((e.deltaY < 0 && !atTop) || (e.deltaY > 0 && !atBottom)) {
+                    e.stopPropagation();
+                }
+            }, { passive: true });
+
+            // Additional touch event handling for mobile devices
+            studentDropdownInner.addEventListener('touchmove', function(e) {
+                e.stopPropagation();
+            }, { passive: true });
 
             // Show dropdown when search is focused
             studentSearch.addEventListener('focus', function() {
                 studentDropdown.classList.remove('hidden');
+                isDropdownOpen = true;
                 filterStudents(this.value);
             });
 
@@ -194,8 +272,8 @@
                 let hasVisibleOptions = false;
                 
                 // First, restore original HTML if it was replaced
-                if (!studentDropdown.querySelector('.student-option')) {
-                    studentDropdown.innerHTML = originalDropdownHTML;
+                if (!studentDropdownInner.querySelector('.student-option')) {
+                    studentDropdownInner.innerHTML = originalDropdownHTML;
                     // Re-attach event listeners to restored options
                     attachStudentClickListeners();
                 }
@@ -221,9 +299,12 @@
                     }
                 });
 
+                // Reset scroll position to top when filtering
+                studentDropdownInner.scrollTop = 0;
+
                 // Show "no results" message if needed
                 if (!hasVisibleOptions && search !== '') {
-                    studentDropdown.innerHTML = '<div class="px-6 py-4 text-gray-500 text-center">Tidak ada siswa ditemukan</div>';
+                    studentDropdownInner.innerHTML = '<div class="px-6 py-4 text-gray-500 text-center">Tidak ada siswa ditemukan</div>';
                 }
             }
 
@@ -258,6 +339,7 @@
                         // Clear search and hide dropdown
                         studentSearch.value = '';
                         studentDropdown.classList.add('hidden');
+                        isDropdownOpen = false;
                         
                         // Hide the selected student from dropdown
                         this.style.display = 'none';
@@ -272,6 +354,7 @@
             document.addEventListener('click', function(event) {
                 if (!studentSearch.contains(event.target) && !studentDropdown.contains(event.target)) {
                     studentDropdown.classList.add('hidden');
+                    isDropdownOpen = false;
                 }
             });
 
