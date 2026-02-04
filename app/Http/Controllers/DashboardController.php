@@ -17,7 +17,7 @@ class DashboardController extends Controller
                 'total_late_today' => \App\Models\LateAttendance::whereDate('late_date', today())->count(),
                 'total_late_this_month' => \App\Models\LateAttendance::whereMonth('late_date', now()->month)
                     ->whereYear('late_date', now()->year)->count(),
-                'pending_count' => \App\Models\LateAttendance::pending()->count(),
+                'pending_count' => \App\Models\ExitPermission::pending()->count(),
                 'top_late_students' => \App\Models\Student::withCount('lateAttendances')
                     ->orderBy('late_attendances_count', 'desc')
                     ->take(5)
@@ -37,6 +37,7 @@ class DashboardController extends Controller
                 'total_late_this_month' => \App\Models\LateAttendance::where('class_id', $user->assigned_class_id)
                     ->whereMonth('late_date', now()->month)
                     ->whereYear('late_date', now()->year)->count(),
+                'pending_count' => \App\Models\ExitPermission::where('class_id', $user->assigned_class_id)->where('walas_status', 'pending')->count(),
                 'top_late_students' => \App\Models\Student::where('class_id', $user->assigned_class_id)
                     ->withCount('lateAttendances')
                     ->orderBy('late_attendances_count', 'desc')

@@ -53,7 +53,7 @@
                     <div>
                         <div class="text-white text-xs font-bold uppercase tracking-wider mb-2" style="font-family: 'Poppins', sans-serif; font-weight: 700;">MENUNGGU APPROVAL</div>
                         <div class="text-white font-black mb-1" style="font-family: 'Poppins', sans-serif; font-size: 4rem; line-height: 1;">{{ $stats['pending_count'] }}</div>
-                        <div class="text-white text-xs" style="font-family: 'Poppins', sans-serif; font-weight: 400;">Perlu ditinjau</div>
+                        <div class="text-white text-xs" style="font-family: 'Poppins', sans-serif; font-weight: 400;">Izin keluar perlu approval</div>
                     </div>
                     <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-3">
                         <img src="{{ asset('build/assets/alert.png') }}" alt="Alert" class="w-16 h-16 object-contain" style="width: 130px; height: 100px;">
