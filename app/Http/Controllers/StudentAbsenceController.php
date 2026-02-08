@@ -71,7 +71,7 @@ class StudentAbsenceController extends Controller
             'absence_date' => ['required', 'date'],
             'class_id' => ['required', 'exists:classes,id'],
             'statuses' => ['array'],
-            'statuses.*' => ['nullable', 'in:S,I,A'],
+            'statuses.*' => ['nullable', 'in:S,I,A,T,D'],
         ]);
 
         $date = $validated['absence_date'];
@@ -80,7 +80,7 @@ class StudentAbsenceController extends Controller
         $studentIds = $class->students()->active()->pluck('id');
         $statuses = collect($validated['statuses'] ?? [])
             ->filter(function ($value) {
-                return in_array($value, ['S', 'I', 'A'], true);
+                return in_array($value, ['S', 'I', 'A', 'T', 'D'], true);
             });
 
         DB::transaction(function () use ($date, $class, $studentIds, $statuses) {

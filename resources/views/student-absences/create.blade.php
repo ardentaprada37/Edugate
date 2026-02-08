@@ -121,6 +121,16 @@
                                                             style="border-color:#ef4444; color:#ef4444;">
                                                             A
                                                         </button>
+                                                        <button type="button" data-student="{{ $student->id }}" data-status="T"
+                                                            class="absence-btn px-4 py-2 rounded-lg border text-sm font-bold transition"
+                                                            style="border-color:#8b5cf6; color:#8b5cf6;">
+                                                            T
+                                                        </button>
+                                                        <button type="button" data-student="{{ $student->id }}" data-status="D"
+                                                            class="absence-btn px-4 py-2 rounded-lg border text-sm font-bold transition"
+                                                            style="border-color:#10b981; color:#10b981;">
+                                                            D
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -157,7 +167,12 @@
                 const buttons = document.querySelectorAll(`.absence-btn[data-student="${studentId}"]`);
                 buttons.forEach(btn => {
                     const btnStatus = btn.getAttribute('data-status');
-                    const baseColor = btnStatus === 'S' ? '#3b82f6' : (btnStatus === 'I' ? '#f59e0b' : '#ef4444');
+                    let baseColor = '#3b82f6'; // S - blue
+                    if (btnStatus === 'I') baseColor = '#f59e0b'; // I - orange
+                    else if (btnStatus === 'A') baseColor = '#ef4444'; // A - red
+                    else if (btnStatus === 'T') baseColor = '#8b5cf6'; // T - purple
+                    else if (btnStatus === 'D') baseColor = '#10b981'; // D - green
+                    
                     if (btnStatus === status && status) {
                         btn.style.backgroundColor = baseColor;
                         btn.style.color = '#ffffff';

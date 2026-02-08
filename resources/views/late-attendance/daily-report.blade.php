@@ -290,7 +290,7 @@
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-semibold text-gray-900">
-                            Data Ketidakhadiran (S / I / A) - {{ \Carbon\Carbon::parse($date)->format('d F Y') }}
+                            Data Ketidakhadiran (S / I / A / T / D) - {{ \Carbon\Carbon::parse($date)->format('d F Y') }}
                         </h3>
                         <div class="text-sm text-gray-500">
                             Total: {{ $totalAbsentStudents ?? 0 }} siswa
@@ -316,11 +316,15 @@
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $absence->student->name }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                         @if($absence->status === 'S')
-                                                            Sakit
+                                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Sakit</span>
                                                         @elseif($absence->status === 'I')
-                                                            Izin
-                                                        @else
-                                                            Alpa
+                                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Izin</span>
+                                                        @elseif($absence->status === 'A')
+                                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Alpa</span>
+                                                        @elseif($absence->status === 'T')
+                                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">Tefa</span>
+                                                        @elseif($absence->status === 'D')
+                                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Dispen</span>
                                                         @endif
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $absence->recordedBy->name ?? 'N/A' }}</td>

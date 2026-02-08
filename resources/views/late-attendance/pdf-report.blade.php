@@ -355,7 +355,7 @@
     <!-- Student Absence Report (S/I/A) -->
     <div class="class-section">
         <div class="class-header" style="border-left-color: #f59e0b;">
-            KETIDAKHADIRAN SISWA (S / I / A)
+            KETIDAKHADIRAN SISWA (S / I / A / T / D)
         </div>
 
         @if(($groupedAbsences ?? collect())->count() > 0)
@@ -384,8 +384,12 @@
                                             Sakit
                                         @elseif($absence->status === 'I')
                                             Izin
-                                        @else
+                                        @elseif($absence->status === 'A')
                                             Alpa
+                                        @elseif($absence->status === 'T')
+                                            Tefa
+                                        @elseif($absence->status === 'D')
+                                            Dispen
                                         @endif
                                     </td>
                                     <td>{{ $absence->recordedBy->name ?? 'N/A' }}</td>
