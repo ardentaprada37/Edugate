@@ -17,10 +17,6 @@ RUN npm ci && npm run build
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 storage bootstrap/cache
 
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
-
 EXPOSE 8080
 
 CMD php artisan migrate --force && \
