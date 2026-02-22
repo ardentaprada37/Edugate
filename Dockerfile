@@ -20,4 +20,5 @@ RUN chown -R www-data:www-data /var/www \
 EXPOSE 8080
 
 CMD php artisan migrate --force --graceful && \
+    if [ "$RUN_DB_SEED" = "true" ]; then php artisan db:seed --force; fi && \
     php artisan serve --host=0.0.0.0 --port=8080

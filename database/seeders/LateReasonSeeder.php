@@ -21,7 +21,10 @@ class LateReasonSeeder extends Seeder
         ];
 
         foreach ($reasons as $reason) {
-            \App\Models\LateReason::create($reason);
+            \App\Models\LateReason::updateOrCreate(
+                ['reason' => $reason['reason']],
+                $reason
+            );
         }
     }
 }

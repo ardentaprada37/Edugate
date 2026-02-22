@@ -44,7 +44,10 @@ class StudentSeeder extends Seeder
         ];
 
         foreach ($students as $student) {
-            \App\Models\Student::create($student);
+            \App\Models\Student::updateOrCreate(
+                ['student_number' => $student['student_number']],
+                $student
+            );
         }
     }
 }

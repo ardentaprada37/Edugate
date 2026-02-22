@@ -22,7 +22,10 @@ class ClassSeeder extends Seeder
         ];
 
         foreach ($classes as $class) {
-            \App\Models\SchoolClass::create($class);
+            \App\Models\SchoolClass::updateOrCreate(
+                ['name' => $class['name']],
+                $class
+            );
         }
     }
 }
