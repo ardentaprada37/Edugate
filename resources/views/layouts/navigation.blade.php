@@ -138,55 +138,55 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:!hidden header-primary border-t border-white/10">
-        <div class="pt-2 pb-3 space-y-1">
-            <a href="{{ route('dashboard') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out {{ request()->routeIs('dashboard') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:!hidden header-primary border-t border-white/10 mobile-nav-menu">
+        <div class="pt-2 pb-3 space-y-1 mobile-nav-group">
+            <a href="{{ route('dashboard') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out mobile-nav-link {{ request()->routeIs('dashboard') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
                 {{ __('Dashboard') }}
             </a>
 
             @if(!Auth::user()->isWalas())
-            <a href="{{ route('classes.index') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out {{ request()->routeIs('classes.*') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
+            <a href="{{ route('classes.index') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out mobile-nav-link {{ request()->routeIs('classes.*') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
                 {{ __('Catat Siswa Telat') }}
             </a>
 
             @if(Auth::user()->isAdmin() || Auth::user()->isTeacher())
-                <a href="{{ route('student-absences.create') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out {{ request()->routeIs('student-absences.*') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
+                <a href="{{ route('student-absences.create') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out mobile-nav-link {{ request()->routeIs('student-absences.*') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
                     {{ __('Input Ketidakhadiran') }}
                 </a>
             @endif
-            <div class="border-t border-white/10 my-2"></div>
-            <div class="px-4 py-2 text-xs font-semibold text-blue-200 uppercase tracking-wider">
+            <div class="border-t border-white/10 my-2 mobile-nav-section-divider"></div>
+            <div class="px-4 py-2 text-xs font-semibold text-blue-200 uppercase tracking-wider mobile-nav-section-label">
                 Laporan
             </div>
-            <a href="{{ route('late-attendance.index') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out {{ request()->routeIs('late-attendance.index') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
+            <a href="{{ route('late-attendance.index') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out mobile-nav-link {{ request()->routeIs('late-attendance.index') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
                 {{ __('Data Keterlambatan') }}
             </a>
-            <a href="{{ route('late-attendance.report') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out {{ request()->routeIs('late-attendance.report') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
+            <a href="{{ route('late-attendance.report') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out mobile-nav-link {{ request()->routeIs('late-attendance.report') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
                 {{ __('Laporan Keterlambatan & Ketidakhadiran') }}
             </a>
-            <div class="border-t border-white/10 my-2"></div>
+            <div class="border-t border-white/10 my-2 mobile-nav-section-divider"></div>
             @endif
 
             @if(Auth::user()->isAdmin() || Auth::user()->isTeacher() || Auth::user()->isWalas() || Auth::user()->isHomeroomTeacher())
-                <a href="{{ route('admin.students.index') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out {{ request()->routeIs('admin.students.*') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
+                <a href="{{ route('admin.students.index') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out mobile-nav-link {{ request()->routeIs('admin.students.*') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
                     {{ __('Kelola Data Siswa') }}
                 </a>
             @endif
 
-            <a href="{{ route('exit-permissions.index') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out {{ request()->routeIs('exit-permissions.*') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
+            <a href="{{ route('exit-permissions.index') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out mobile-nav-link {{ request()->routeIs('exit-permissions.*') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
                 {{ __('Izin Keluar Siswa') }}
             </a>
         </div>
 
         <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
+        <div class="pt-4 pb-1 border-t border-gray-200 mobile-nav-account">
             <div class="px-4">
                 <div class="font-medium text-base text-white">{{ Auth::user()->name }}</div>
                 <div class="font-medium text-sm text-blue-200">{{ Auth::user()->email }}</div>
             </div>
 
-            <div class="mt-3 space-y-1">
-                <a href="{{ route('profile.edit') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300">
+            <div class="mt-3 space-y-1 mobile-nav-group mobile-nav-account-links">
+                <a href="{{ route('profile.edit') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300 mobile-nav-link">
                     {{ __('Profile') }}
                 </a>
 
@@ -194,11 +194,67 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 
-                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300">
+                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300 mobile-nav-link">
                         {{ __('Log Out') }}
                     </a>
                 </form>
             </div>
         </div>
     </div>
+
+    <style>
+        @media (max-width: 768px) {
+            .mobile-nav-menu {
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .mobile-nav-group {
+                margin-left: 12px;
+                margin-right: 12px;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+
+            .mobile-nav-link {
+                padding-top: 13px !important;
+                padding-bottom: 13px !important;
+                padding-left: 16px !important;
+                padding-right: 16px !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .mobile-nav-group > .mobile-nav-link:last-child {
+                border-bottom: 0;
+            }
+
+            .mobile-nav-section-divider {
+                margin-top: 14px !important;
+                margin-bottom: 14px !important;
+            }
+
+            .mobile-nav-section-label {
+                font-size: 10px;
+                letter-spacing: 0.14em;
+                opacity: 0.72;
+                padding-top: 0;
+                padding-bottom: 8px;
+            }
+
+            .mobile-nav-account {
+                margin-top: 16px;
+                padding-top: 18px;
+                border-top-color: rgba(255, 255, 255, 0.16);
+            }
+
+            .mobile-nav-account-links {
+                margin-top: 12px !important;
+                margin-bottom: 8px;
+            }
+
+            .mobile-nav-account-links form .mobile-nav-link {
+                border-bottom: 0;
+            }
+        }
+    </style>
 </nav>

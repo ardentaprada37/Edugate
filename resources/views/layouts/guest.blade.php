@@ -28,7 +28,7 @@
         </style>
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 animate-gradient relative overflow-hidden">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center px-4 sm:px-0 pt-6 sm:pt-0 bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 animate-gradient relative overflow-hidden">
             
             <!-- Animated Background Elements -->
             <div class="absolute inset-0 overflow-hidden pointer-events-none">

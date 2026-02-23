@@ -1160,6 +1160,23 @@
                     padding: 4px 8px;
                 }
             }
+
+            @media (max-width: 639px) {
+                .mobile-page-spacing {
+                    padding-left: 16px;
+                    padding-right: 16px;
+                }
+
+                .mobile-page-spacing .\-mx-6 {
+                    margin-left: -16px;
+                    margin-right: -16px;
+                }
+
+                .mobile-page-spacing .\-mx-6.px-6 {
+                    padding-left: 16px;
+                    padding-right: 16px;
+                }
+            }
         </style>
     </head>
     <body class="font-sans antialiased bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
@@ -1176,7 +1193,7 @@
             @endisset
 
             <!-- Page Content -->
-            <main>
+            <main class="{{ request()->routeIs('dashboard', 'walas.dashboard') ? '' : 'mobile-page-spacing' }}">
                 {{ $slot }}
             </main>
         </div>
