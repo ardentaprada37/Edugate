@@ -34,14 +34,14 @@
     @endpush
 
     <x-slot name="header">
-        <div class="bg-custom-blue -mt-6 -mx-6 px-6 py-12 mb-6 shadow-md flex items-center">
-            <div class="flex-1">
+        <div class="bg-custom-blue -mt-6 -mx-6 px-6 py-12 mb-6 shadow-md flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div class="flex-1 min-w-0">
                 <h2 class="font-bold text-3xl text-white leading-tight drop-shadow-md">
                     Catat Siswa Multi
                 </h2>
                 <p class="text-white mt-2 text-sm opacity-90">Pilih beberapa siswa sekaligus untuk dicatat</p>
             </div>
-            <a href="{{ route('late-attendance.index') }}" class="bg-white/10 hover:bg-white/20 text-white font-semibold py-2 px-4 rounded-full transition duration-300 flex items-center backdrop-blur-sm text-sm border border-white/20">
+            <a href="{{ route('late-attendance.index') }}" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white font-semibold py-2 px-4 rounded-full transition duration-300 inline-flex items-center justify-center backdrop-blur-sm text-sm border border-white/20">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
@@ -51,7 +51,7 @@
     </x-slot>
 
     <div class="py-6 bg-white min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Student Selection Section -->
             <div class="mb-8">
@@ -106,12 +106,12 @@
             <form method="POST" action="{{ route('late-attendance.multi-store') }}" id="late_attendance_form">
                 @csrf
                 
-                <div class="mb-6 flex justify-between items-center">
-                    <div>
+                <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div class="min-w-0">
                         <h3 class="text-xl font-bold text-gray-900 leading-none">Daftar Terlambat</h3>
                         <p class="text-gray-500 text-sm mt-1">Detail siswa yang akan dicatat</p>
                     </div>
-                    <span id="student_count_badge" class="bg-custom-blue text-white text-xs font-bold px-3 py-1 rounded-full flex items-center h-fit">0 Siswa</span>
+                    <span id="student_count_badge" class="bg-custom-blue text-white text-xs font-bold px-3 py-1 rounded-full inline-flex items-center h-fit shrink-0">0 Siswa</span>
                 </div>
                 
                 <div id="selected_students_container" class="space-y-4">
@@ -277,20 +277,20 @@
                 let html = '';
                 selectedStudents.forEach((student, index) => {
                     html += `
-                    <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 relative group animate-fade-in-up">
+                    <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 relative group animate-fade-in-up overflow-hidden">
                         <button type="button" onclick="removeStudent(${student.id})" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors p-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
 
-                        <div class="flex items-center mb-6">
+                        <div class="flex items-center mb-6 pr-8 min-w-0">
                             <div class="bg-card-gray w-12 h-12 rounded-full flex items-center justify-center text-gray-700 font-bold text-lg mr-4">
                                 ${student.name.charAt(0).toUpperCase()}
                             </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-lg leading-tight">${student.name}</h4>
-                                <p class="text-sm text-gray-500">${student.class}</p>
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-gray-900 text-lg leading-tight break-words">${student.name}</h4>
+                                <p class="text-sm text-gray-500 break-words">${student.class}</p>
                             </div>
                         </div>
 

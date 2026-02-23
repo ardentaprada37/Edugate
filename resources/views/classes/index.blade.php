@@ -8,17 +8,17 @@
     </x-slot>
 
     <div class="py-6 bg-white min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Header for the grid section -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <div>
-                     <h3 class="text-xl font-bold text-gray-900 leading-none">Daftar Kelas</h3>
-                     <p class="text-gray-500 text-sm mt-2">Klik kartu kelas untuk melihat daftar siswa</p>
+                <div class="w-full md:w-auto min-w-0">
+                     <h3 class="text-xl font-bold text-gray-900 leading-none break-words">Daftar Kelas</h3>
+                     <p class="text-gray-500 text-sm mt-2 break-words">Klik kartu kelas untuk melihat daftar siswa</p>
                 </div>
                 
                 <!-- Button Cari & Pilih Siswa -->
-                <a href="{{ route('late-attendance.multi-create') }}" class="w-full md:w-auto inline-flex items-center justify-center bg-custom-blue text-white px-6 py-3 rounded-full font-bold text-sm hover:scale-105 active:scale-95 hover:shadow-xl transition-all duration-300 shadow-md">
+                <a href="{{ route('late-attendance.multi-create') }}" class="w-full md:w-auto inline-flex items-center justify-center text-center bg-custom-blue text-white px-6 py-3 rounded-full font-bold text-sm hover:scale-105 active:scale-95 hover:shadow-xl transition-all duration-300 shadow-md">
                     Cari & Pilih Siswa
                 </a>
             </div>
