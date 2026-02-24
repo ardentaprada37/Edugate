@@ -65,3 +65,4 @@ coverage/
 tmp_rovodev_*
 *.tmp
 *.bak
+.env.railway
