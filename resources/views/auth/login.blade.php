@@ -51,18 +51,18 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding: 40px 80px;
+            padding: 32px 64px;
         }
 
         /* Login Card dengan Glassmorphism */
         .login-card {
             width: 100%;
-            max-width: 420px;
+            max-width: 380px;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-radius: 30px;
-            padding: 50px 45px;
+            padding: 40px 36px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             animation: fadeInRight 0.8s ease-out;
@@ -100,9 +100,9 @@
         /* Login Title */
         .login-title {
             color: white;
-            font-size: 48px;
+            font-size: 40px;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -112,8 +112,8 @@
             font-family: 'Poppins';
             font-style: normal;
             font-weight: 700;
-            font-size: 36px;
-            line-height: 54px;
+            font-size: 32px;
+            line-height: 46px;
             color: #160B6A;
             margin: 0 auto 15px auto;
             padding: 0;
@@ -125,16 +125,16 @@
         /* Welcome Text */
         .welcome-text {
             color: white;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 400;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             line-height: 1.5;
             text-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
         }
 
         /* Form Group */
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
@@ -148,7 +148,7 @@
 
         .form-group input {
             width: 100%;
-            padding: 16px 20px;
+            padding: 14px 16px;
             border: none;
             border-radius: 15px;
             font-size: 15px;
@@ -172,12 +172,12 @@
         /* Login Button */
         .login-btn {
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
             color: white;
             border: none;
             border-radius: 15px;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 600;
             font-family: 'Poppins', sans-serif;
             cursor: pointer;
