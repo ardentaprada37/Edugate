@@ -12,15 +12,23 @@ class WalasUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create shared Walas account - dedicated for exit permission approval only
-        \App\Models\User::updateOrCreate(
-            ['email' => 'walas@sekolah.com'],
-            [
-                'name' => 'Walas Shared Account',
-                'password' => \Illuminate\Support\Facades\Hash::make('walas2024'),
-                'role' => 'walas',
-                'email_verified_at' => now(),
-            ]
-        );
+        $classes = \App\Models\SchoolClass::query()
+            ->active()
+            ->orderBy('id')
+            ->get();
+
+        foreach ($classes as $class) {
+            $email = 'walas.class' . $class->id . '@school.com';
+
+            \App\Models\User::updateOrCreate(
+                ['email' => $email],
+                [
+                    'name' => 'Walas ' . $class->name,
+                    'password' => \Illuminate\Support\Facades\Hash::make('walas12345'),
+                    'role' => 'walas',
+                    'assigned_class_id' => $class->id,
+                ]
+            );
+        }
     }
 }

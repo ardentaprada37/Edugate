@@ -36,6 +36,10 @@ class DashboardController extends Controller
             ];
         } else {
             // Homeroom teacher - only their class
+            if (!$user->hasAssignedClass()) {
+                abort(403, 'Akun Anda belum terhubung ke kelas. Hubungi admin.');
+            }
+
             $stats = [
                 'total_late_today' => \App\Models\LateAttendance::where('class_id', $user->assigned_class_id)
                     ->whereDate('late_date', today())->count(),

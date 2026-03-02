@@ -1,8 +1,8 @@
 <nav x-data="{ open: false }" class="navbar-primary shadow-2xl border-b-4 border-white border-opacity-20">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-20">
-            <div class="flex">
+    <div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
+        <div class="flex h-20 items-center justify-between gap-4">
+            <div class="flex min-w-0 flex-1 items-center">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center group">
@@ -19,7 +19,7 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden lg:!flex space-x-2 lg:-my-px lg:ms-10 items-center">
+                <div class="desktop-nav-links hidden lg:!flex lg:flex-1 lg:min-w-0 lg:items-center lg:gap-2 xl:gap-3 lg:-my-px lg:ms-8">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="!text-white hover:!bg-white hover:!bg-opacity-20 !border-transparent hover:!border-white">
                         <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -77,6 +77,15 @@
                         </x-nav-link>
                     @endif
 
+                    @if(Auth::user()->isAdmin())
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')" class="!text-white hover:!bg-white hover:!bg-opacity-20 !border-transparent hover:!border-white">
+                            <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5V4H2v16h5m10 0v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2m12 0H7m6-10a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Kelola Akun Walas
+                        </x-nav-link>
+                    @endif
+
                     <x-nav-link :href="route('exit-permissions.index')" :active="request()->routeIs('exit-permissions.*')" class="!text-white hover:!bg-white hover:!bg-opacity-20 !border-transparent hover:!border-white">
                         <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
@@ -87,7 +96,7 @@
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden lg:!flex lg:items-center lg:ms-6">
+            <div class="hidden lg:!flex lg:shrink-0 lg:items-center lg:ms-8">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-4 py-2 bg-white bg-opacity-20 backdrop-blur-lg text-white font-bold rounded-xl hover:bg-opacity-30 focus:outline-none transition ease-in-out duration-150 border border-white border-opacity-30">
@@ -96,7 +105,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
                             </div>
-                            <div>{{ Auth::user()->name }}</div>
+                            <div class="max-w-[160px] truncate">{{ Auth::user()->name }}</div>
 
                             <div class="ms-2">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -173,6 +182,12 @@
                 </a>
             @endif
 
+            @if(Auth::user()->isAdmin())
+                <a href="{{ route('admin.users.index') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out mobile-nav-link {{ request()->routeIs('admin.users.*') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
+                    {{ __('Kelola Akun Walas') }}
+                </a>
+            @endif
+
             <a href="{{ route('exit-permissions.index') }}" class="block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium transition duration-150 ease-in-out mobile-nav-link {{ request()->routeIs('exit-permissions.*') ? 'border-white text-white bg-white/20' : 'border-transparent text-blue-100 hover:text-white hover:bg-white/10 hover:border-blue-300' }}">
                 {{ __('Izin Keluar Siswa') }}
             </a>
@@ -203,6 +218,20 @@
     </div>
 
     <style>
+        @media (min-width: 1024px) and (max-width: 1279px) {
+            .desktop-nav-links > a svg,
+            .desktop-nav-links > div > button > svg:first-child {
+                display: none;
+            }
+
+            .desktop-nav-links > a,
+            .desktop-nav-links > div > button {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+                font-size: 12px !important;
+            }
+        }
+
         @media (max-width: 768px) {
             .mobile-nav-menu {
                 padding-left: 0;

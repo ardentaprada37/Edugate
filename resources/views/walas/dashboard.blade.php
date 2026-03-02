@@ -7,13 +7,23 @@
             <div>
                 <h1 class="text-3xl font-black text-gray-900 mb-2" style="font-family: 'Poppins', sans-serif;">Selamat Datang, Wali Kelas!</h1>
                 <p class="text-sm text-gray-500 leading-relaxed" style="font-family: 'Poppins', sans-serif; font-weight: 400;">
-                 Kelola data siswa dan izin keluar siswa dengan mudah. <br>
-Semua data tersimpan rapi dan mudah diperiksa kapan saja.
+                    Akun Anda terhubung ke kelas <span class="font-semibold text-gray-700">{{ $assignedClass?->name ?? '-' }}</span>. <br>
+                    Anda hanya dapat melihat dan memproses izin keluar dari kelas ini.
                 </p>
             </div>
             <div class="hidden md:block">
                 <img src="{{ asset('images/din.png') }}" alt="Illustration" class="object-contain drop-shadow-2xl" style="width: 240px; height: 240px;">
             </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-md p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-2" style="font-family: 'Poppins', sans-serif;">Ringkasan Kelas</h3>
+            <p class="text-sm text-gray-600" style="font-family: 'Poppins', sans-serif;">
+                Kelas: <span class="font-semibold text-gray-800">{{ $assignedClass?->name ?? '-' }}</span>
+            </p>
+            <p class="text-sm text-gray-600 mt-1" style="font-family: 'Poppins', sans-serif;">
+                Permohonan izin keluar menunggu persetujuan: <span class="font-semibold text-red-600">{{ $pendingRequestsCount }}</span>
+            </p>
         </div>
 
         <!-- Menu Cepat -->

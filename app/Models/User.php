@@ -80,4 +80,14 @@ class User extends Authenticatable
     {
         return $this->role === 'walas';
     }
+
+    public function isClassScopedRole()
+    {
+        return in_array($this->role, ['homeroom_teacher', 'walas'], true);
+    }
+
+    public function hasAssignedClass()
+    {
+        return !is_null($this->assigned_class_id);
+    }
 }

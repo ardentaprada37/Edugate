@@ -28,7 +28,7 @@
                         @csrf
 
                         <!-- Class Selection (if admin/teacher) -->
-                        @if(auth()->user()->role !== 'homeroom_teacher')
+                        @if(!auth()->user()->isClassScopedRole())
                         <div class="mb-6">
                             <label for="class_id" class="block text-sm mb-2 late-attendance-label flex items-center">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="#160B6A" viewBox="0 0 24 24">
@@ -243,7 +243,7 @@
         });
 
 
-        @if(auth()->user()->role !== 'homeroom_teacher')
+        @if(!auth()->user()->isClassScopedRole())
         // AJAX to load students when class is selected
         document.getElementById('class_id').addEventListener('change', function() {
             const classId = this.value;

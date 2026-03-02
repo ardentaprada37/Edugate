@@ -53,7 +53,7 @@
                             <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Nama siswa..." class="exit-permissions-input text-sm">
                         </div>
 
-                        @if(auth()->user()->role !== 'homeroom_teacher')
+                        @if(!auth()->user()->isClassScopedRole())
                         <div>
                             <label for="class_id" class="block text-sm mb-2 exit-permissions-label">Kelas</label>
                             <select name="class_id" id="class_id" class="exit-permissions-input text-sm">
