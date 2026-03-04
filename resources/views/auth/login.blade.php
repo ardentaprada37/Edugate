@@ -317,6 +317,10 @@
 
             <!-- Welcome Text -->
             <p class="welcome-text">Selamat datang kembali, silakan masuk ke akun Anda</p>
+           <p class="welcome-text">
+  Usn: admin@school.com <br>
+  Pw: password
+</p>
 
             <!-- Error Messages -->
             @if (session('status'))

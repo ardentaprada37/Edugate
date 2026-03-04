@@ -66,7 +66,7 @@
                         <!-- Parent Phone -->
                         <div class="mb-4">
                             <x-input-label for="parent_phone" :value="__('Parent Phone')" />
-                            <x-text-input id="parent_phone" class="block mt-1 w-full" type="text" name="parent_phone" :value="old('parent_phone')" />
+                            <x-text-input id="parent_phone" class="block mt-1 w-full" type="text" name="parent_phone" :value="old('parent_phone')" required />
                             <x-input-error :messages="$errors->get('parent_phone')" class="mt-2" />
                         </div>
 

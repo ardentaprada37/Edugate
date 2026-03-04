@@ -99,6 +99,8 @@ Route::middleware(['auth'])->group(function () {
     
     // Student Management - accessible by admin, teacher, walas, and homeroom_teacher
     Route::middleware(['role:admin,teacher,walas,homeroom_teacher'])->prefix('admin')->name('admin.')->group(function () {
+        Route::post('students/import', [StudentManagementController::class, 'import'])->name('students.import');
+        Route::get('students/import-template', [StudentManagementController::class, 'downloadImportTemplate'])->name('students.import-template');
         Route::resource('students', StudentManagementController::class);
     });
     

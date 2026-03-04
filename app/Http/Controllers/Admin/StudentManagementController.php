@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\StudentBulkImportService;
 use Illuminate\Http\Request;
 
 class StudentManagementController extends Controller
@@ -45,7 +46,7 @@ class StudentManagementController extends Controller
             'class_id' => 'required|exists:classes,id',
             'gender' => 'nullable|string',
             'phone' => 'nullable|string',
-            'parent_phone' => 'nullable|string',
+            'parent_phone' => 'required|string|max:50',
             'address' => 'nullable|string',
         ]);
 
@@ -61,6 +62,53 @@ class StudentManagementController extends Controller
 
         \App\Models\Student::create($validated);
         return redirect()->route('admin.students.index')->with('success', 'Student created successfully.');
+    }
+
+    public function import(Request $request, StudentBulkImportService $importService)
+    {
+        $this->ensureCanManageStudents();
+
+        $validated = $request->validate([
+            'import_file' => 'required|file|mimes:csv,xlsx,pdf|max:10240',
+        ]);
+
+        $user = auth()->user();
+
+        if ($user->isClassScopedRole()) {
+            $this->ensureClassScopedUserHasAssignedClass($user);
+        }
+
+        $result = $importService->import(
+            file: $validated['import_file'],
+            user: $user
+        );
+
+        $summary = "Import selesai: {$result['imported_rows']} data berhasil, {$result['skipped_rows']} data dilewati.";
+
+        return redirect()
+            ->route('admin.students.index')
+            ->with('success', $summary)
+            ->with('import_summary', $result);
+    }
+
+    public function downloadImportTemplate()
+    {
+        $this->ensureCanManageStudents();
+
+        $headers = ['nama', 'nis', 'kelas', 'jenis_kelamin', 'no_hp_siswa', 'no_hp_ortu', 'alamat'];
+        $example = ['Contoh Siswa', '20260001', 'Grade 10 PPLG', 'L', '081234567890', '081298765432', 'Jl. Contoh No. 1'];
+
+        $lines = [
+            implode(',', $headers),
+            implode(',', $example),
+        ];
+
+        $content = "\xEF\xBB\xBF" . implode("\n", $lines);
+        $filename = 'template-import-siswa.csv';
+
+        return response($content)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 
     public function edit($id)
@@ -104,7 +152,7 @@ class StudentManagementController extends Controller
             'class_id' => 'required|exists:classes,id',
             'gender' => 'nullable|string',
             'phone' => 'nullable|string',
-            'parent_phone' => 'nullable|string',
+            'parent_phone' => 'required|string|max:50',
             'address' => 'nullable|string',
         ]);
 
